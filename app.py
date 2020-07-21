@@ -7,6 +7,11 @@ from orm import Numeros, Usuarios
 from datetime import datetime, date
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import time
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root@localhost:3306/landroid?charset=utf8mb4"
@@ -55,58 +60,185 @@ def scraping():
 	datas = []
 	datas2 = []
 	datas3 = []
-	chrome_options = webdriver.ChromeOptions()
-	chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-	chrome_options.add_argument("--headless")
-	chrome_options.add_argument("--disable-dev-shm-usage")
-	chrome_options.add_argument("--no-sandbox")
-	driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"), chrome_options = chrome_options)
+	driver = webdriver.Chrome(ChromeDriverManager().install())
+	driver.implicitly_wait(60)
 	driver.get('https://www.lottomaticaitalia.it/it/prodotti/millionday')
-	datos = driver.find_elements_by_tag_name('td')
-	datos2 = driver.find_elements_by_tag_name('span')
+	
+	for data in range(1,8):
+		time.sleep(1)
+		for x in range(2,7):
+			info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-squared-grid > section > div > div.col-sm-4 > div.ltmit-estrazioni-ultime-oggi > div > div > div > table > tbody > tr:nth-child(' + str(data) + ') > td:nth-child(' + str(x) + ')')
+			datas.append(info.get_attribute("innerHTML"))
 
-	for data in datos:
-		datas.append(data.get_attribute("innerHTML"))
+	for data in range(1,8):
+		time.sleep(1)
+		info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-squared-grid > section > div > div.col-sm-4 > div.ltmit-estrazioni-ultime-oggi > div > div > div > table > tbody > tr:nth-child(' + str(data) + ') > td.date.ng-binding > span')
+		datas2.append(info.get_attribute("innerHTML"))
+	
+	for data in range(1,8):
+		time.sleep(1)
+		info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-squared-grid > section > div > div.col-sm-4 > div.ltmit-estrazioni-ultime-oggi > div > div > div > table > tbody > tr:nth-child(' + str(data) + ') > td.date.ng-binding')
+		datas3.append(info.get_attribute("innerHTML")[-5::])
 
-	for data in datos2:
-		datas2.append(data.get_attribute("innerHTML"))
-
-	for data in range(1, 8):
-		datos3 = driver.find_element_by_xpath('/html/body/div/section[2]/div[5]/section/div/div[2]/div[1]/div/div/div/table/tbody/tr[' + str(data) + ']/td[1]')
-		datas3.append(datos3.get_attribute("innerHTML")[-5::])
-		
+	driver.quit()
+	
 	json = {
 		'numeros': [{
-			'dia1': datas[-6:-1],
-			'dia2': datas[-12:-7],
-			'dia3': datas[-18:-13],
-			'dia4': datas[-24:-19],
-			'dia5': datas[-30:-25],
-			'dia6': datas[-36:-31],
-			'dia7': datas[-42:-37]
+			'dia1': datas[0:5],
+			'dia2': datas[5:10],
+			'dia3': datas[10:15],
+			'dia4': datas[15:20],
+			'dia5': datas[20:25],
+			'dia6': datas[25:30],
+			'dia7': datas[30:35]
 		}],
 		'fechas': [{
-			'dia1': datas3[6],
-			'dia2': datas3[5],
-			'dia3': datas3[4],
+			'dia1': datas3[0],
+			'dia2': datas3[1],
+			'dia3': datas3[2],
 			'dia4': datas3[3],
-			'dia5': datas3[2],
-			'dia6': datas3[1],
-			'dia7': datas3[0]
+			'dia5': datas3[4],
+			'dia6': datas3[5],
+			'dia7': datas3[6]
 		}],
 		'dias': [{
-			'dia1': datas2[26],
-			'dia2': datas2[25],
-			'dia3': datas2[24],
-			'dia4': datas2[23],
-			'dia5': datas2[22],
-			'dia6': datas2[21],
-			'dia7': datas2[20],
+			'dia1': datas2[0],
+			'dia2': datas2[1],
+			'dia3': datas2[2],
+			'dia4': datas2[3],
+			'dia5': datas2[4],
+			'dia6': datas2[5],
+			'dia7': datas2[6]
 		}]
 	}
-	driver.quit()
+	
 	return jsonify(json)
 	
+@app.route('/scrapper2', methods = ['GET'])
+def scrapper2():
+	tablas = []
+	datas = []
+	datas2 = []
+	datas3 = []
+	driver = webdriver.Chrome(ChromeDriverManager().install())
+	driver.implicitly_wait(30)
+	driver.get('https://www.lottomaticaitalia.it/it/prodotti/millionday/estrazioni')
+	
+	for data in range(1,30):
+		time.sleep(1)
+		for x in range(2,7):
+			info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-archivio-estrazioni > div > div.col-xs-12.col-sm-8.col-sm-push-4 > table > tbody > tr:nth-child(' + str(data) + ') > td:nth-child(' + str(x) + ')')
+			datas.append(info.get_attribute("innerHTML"))
+
+	for data in range(1,30):
+		time.sleep(1)
+		info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-archivio-estrazioni > div > div.col-xs-12.col-sm-8.col-sm-push-4 > table > tbody > tr:nth-child(' + str(data) + ') > td.date.ng-binding > span')
+		datas2.append(info.get_attribute("innerHTML"))
+	
+	for data in range(1,30):
+		time.sleep(1)
+		info = driver.find_element_by_css_selector('body > div > section.container.main-container > div.ltmit-archivio-estrazioni > div > div.col-xs-12.col-sm-8.col-sm-push-4 > table > tbody > tr:nth-child(' + str(data) + ') > td.date.ng-binding')
+		datas3.append(info.get_attribute("innerHTML")[-31:-16])
+
+	driver.quit()
+	
+	json = {
+		'numeros': [{
+			'dia1': datas[0:5],
+			'dia2': datas[5:10],
+			'dia3': datas[10:15],
+			'dia4': datas[15:20],
+			'dia5': datas[20:25],
+			'dia6': datas[25:30],
+			'dia7': datas[30:35],
+			'dia8': datas[35:40],
+			'dia9': datas[40:45],
+			'dia10': datas[45:50],
+			'dia11': datas[50:55],
+			'dia12': datas[55:60],
+			'dia13': datas[60:65],
+			'dia14': datas[65:70],
+			'dia15': datas[70:75],
+			'dia16': datas[75:80],
+			'dia17': datas[80:85],
+			'dia18': datas[85:90],
+			'dia19': datas[90:95],
+			'dia20': datas[95:100],
+			'dia21': datas[100:105],
+			'dia22': datas[105:110],
+			'dia23': datas[110:115],
+			'dia24': datas[115:120],
+			'dia25': datas[120:125],
+			'dia26': datas[125:130],
+			'dia27': datas[130:135],
+			'dia28': datas[135:140],
+			'dia29': datas[140:145]
+		}],
+		'fechas': [{
+			'dia1': datas3[0],
+			'dia2': datas3[1],
+			'dia3': datas3[2],
+			'dia4': datas3[3],
+			'dia5': datas3[4],
+			'dia6': datas3[5],
+			'dia7': datas3[6],
+			'dia8': datas3[7],
+			'dia9': datas3[8],
+			'dia10': datas3[9],
+			'dia11': datas3[10],
+			'dia12': datas3[11],
+			'dia13': datas3[12],
+			'dia14': datas3[13],
+			'dia15': datas3[14],
+			'dia16': datas3[15],
+			'dia17': datas3[16],
+			'dia18': datas3[17],
+			'dia19': datas3[18],
+			'dia20': datas3[19],
+			'dia21': datas3[20],
+			'dia22': datas3[21],
+			'dia23': datas3[22],
+			'dia24': datas3[23],
+			'dia25': datas3[24],
+			'dia26': datas3[25],
+			'dia27': datas3[26],
+			'dia28': datas3[27],
+			'dia29': datas3[28]
+		}],
+		'dias': [{
+			'dia1': datas2[0],
+			'dia2': datas2[1],
+			'dia3': datas2[2],
+			'dia4': datas2[3],
+			'dia5': datas2[4],
+			'dia6': datas2[5],
+			'dia7': datas2[6],
+			'dia8': datas2[7],
+			'dia9': datas2[8],
+			'dia10': datas2[9],
+			'dia11': datas2[10],
+			'dia12': datas2[11],
+			'dia13': datas2[12],
+			'dia14': datas2[13],
+			'dia15': datas2[14],
+			'dia16': datas2[15],
+			'dia17': datas2[16],
+			'dia18': datas2[17],
+			'dia19': datas2[18],
+			'dia20': datas2[19],
+			'dia21': datas2[20],
+			'dia22': datas2[21],
+			'dia23': datas2[22],
+			'dia24': datas2[23],
+			'dia25': datas2[24],
+			'dia26': datas2[25],
+			'dia27': datas2[26],
+			'dia28': datas2[27],
+			'dia29': datas2[28]
+		}]
+	}
+	return jsonify(json)
+
 #@app.route('/cerrar', methods = ['GET'])
 #def cerrar():
 #	session.pop('correo', None)

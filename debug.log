@@ -21,3 +21,6 @@
 [0626/195911.343:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Se intentó obtener acceso a un proceso que está cerrándose. (0xc000010a)
 [0629/170946.058:ERROR:process_reader_win.cc(123)] NtOpenThread: {Acceso denegado} Un proceso ha solicitado acceso a un objeto, pero no se le han concedido esos derechos de acceso. (0xc0000022)
 [0629/170946.077:ERROR:exception_snapshot_win.cc(98)] thread ID 5720 not found in process
+[0706/100124.163:ERROR:process_reader_win.cc(151)] SuspendThread: Acceso denegado. (0x5)
+[0706/100124.239:ERROR:exception_snapshot_win.cc(98)] thread ID 7896 not found in process
+[0706/100124.239:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Se intentó obtener acceso a un proceso que está cerrándose. (0xc000010a)
