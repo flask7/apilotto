@@ -55,7 +55,88 @@ def numeros():
 	return jsonify(respuesta = 'Número registrado satisfactoriamente')
 
 @app.route('/scrapper', methods = ['GET', 'POST'])
-def scraping():
+def scrapping():
+	json = {
+	  "dias": [
+	    {
+	      "dia1": "DOMENICA", 
+	      "dia2": "SABATO", 
+	      "dia3": "VENERD\u00cc", 
+	      "dia4": "GIOVED\u00cc", 
+	      "dia5": "MERCOLED\u00cc", 
+	      "dia6": "MARTED\u00cc", 
+	      "dia7": "LUNED\u00cc"
+	    }
+	  ], 
+	  "fechas": [
+	    {
+	      "dia1": "26/07", 
+	      "dia2": "25/07", 
+	      "dia3": "24/07", 
+	      "dia4": "23/07", 
+	      "dia5": "22/07", 
+	      "dia6": "21/07", 
+	      "dia7": "20/07"
+	    }
+	  ], 
+	  "numeros": [
+	    {
+	      "dia1": [
+	        "17", 
+	        "20", 
+	        "26", 
+	        "49", 
+	        "55"
+	      ], 
+	      "dia2": [
+	        "6", 
+	        "10", 
+	        "15", 
+	        "49", 
+	        "55"
+	      ], 
+	      "dia3": [
+	        "12", 
+	        "15", 
+	        "24", 
+	        "42", 
+	        "48"
+	      ], 
+	      "dia4": [
+	        "8", 
+	        "15", 
+	        "22", 
+	        "28", 
+	        "29"
+	      ], 
+	      "dia5": [
+	        "1", 
+	        "8", 
+	        "9", 
+	        "10", 
+	        "50"
+	      ], 
+	      "dia6": [
+	        "25", 
+	        "32", 
+	        "42", 
+	        "54", 
+	        "55"
+	      ], 
+	      "dia7": [
+	        "8", 
+	        "24", 
+	        "26", 
+	        "34", 
+	        "55"
+	      ]
+	    }
+	  ]
+	}
+	return jsonify(json)
+
+@app.route('/scrapperp', methods = ['GET', 'POST'])
+def scrapingp():
 	tablas = []
 	datas = []
 	datas2 = []
