@@ -32,7 +32,7 @@ itsdangerous==1.1.0
 janus==0.4.0
 Jinja2==2.11.2
 jsonpickle==1.4.1
-lxml==4.5.1
+lxml==4.6.2
 MarkupSafe==1.1.1
 msrest==0.6.16
 oauthlib==3.1.0
